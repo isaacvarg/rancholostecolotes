@@ -1,0 +1,27 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model QrScan {
+  id        String   @id @default(uuid(7))
+  source    String?  @db.VarChar(64)
+  path      String   @db.VarChar(255)
+  userAgent String?  @map("user_agent") @db.VarChar(512)
+  referer   String?  @db.VarChar(512)
+  ipHash    String?  @map("ip_hash") @db.Char(64)
+  scannedAt DateTime @default(now()) @map("scanned_at") @db.Timestamptz(3)
+
+  @@index([scannedAt])
+  @@index([source, scannedAt])
+  @@map("qr_scan")
+}

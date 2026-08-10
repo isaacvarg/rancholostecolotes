@@ -11,8 +11,15 @@ COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY prisma ./prisma
 RUN pnpm install --frozen-lockfile
 
-# Build the app.
+# Build the app. `next build` imports every route module (even
+# force-dynamic ones) while collecting page data, which evaluates
+# lib/prisma.ts's top-level DATABASE_URL check. This placeholder only
+# needs to satisfy that check — it's never used to connect to anything,
+# and it doesn't carry over to the runner stage. The real value is
+# provided at container runtime (see compose.yml).
 FROM base AS builder
+ARG DATABASE_URL="postgresql://user:password@localhost:5432/db?schema=public"
+ENV DATABASE_URL=$DATABASE_URL
 COPY --from=deps /app/node_modules ./node_modules
 COPY --from=deps /app/generated ./generated
 COPY . .

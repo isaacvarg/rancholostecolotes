@@ -1,13 +1,10 @@
 services:
   tecolotes-web:
-    build: .
-    image: ghcr.io/isaacvarg/rancholostecolotes:latest
+    image: ${DOCKER_REGISTRY}/${DOCKER_IMAGE_NAME}:${IMAGE_TAG:-latest}
+    pull_policy: always
+    container_name: tecolotes-web
     restart: unless-stopped
-    environment:
-      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}?schema=public
-      QR_SCAN_IP_SALT: ${QR_SCAN_IP_SALT}
-    expose:
-      - "3000"
+    env_file: .env
     depends_on:
       db:
         condition: service_healthy
@@ -17,26 +14,27 @@ services:
 
   db:
     image: postgres:17-alpine
+    container_name: tecolotes-db
     restart: unless-stopped
     environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
     volumes:
-      - db_data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
-      interval: 5s
-      timeout: 5s
-      retries: 10
+      - postgres_data:/var/lib/postgresql/
     networks:
       - backend
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
 
 networks:
   edge:
     external: true
   backend:
     internal: true
-
-volumes:
-  db_data:

@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <circle cx="32" cy="32" r="32" fill="#b5552d"/>
+  <g transform="translate(8 6) scale(0.75)">
+    <path d="M14 14 L22 22 Q32 18 42 22 L50 14 L50 38 Q50 56 32 58 Q14 56 14 38 Z" fill="#fffaf0"/>
+    <circle cx="24" cy="32" r="7" fill="#b5552d"/>
+    <circle cx="40" cy="32" r="7" fill="#b5552d"/>
+    <circle cx="24" cy="32" r="3" fill="#fffaf0"/>
+    <circle cx="40" cy="32" r="3" fill="#fffaf0"/>
+    <path d="M29 40 L32 45 L35 40 Z" fill="#b5552d"/>
+  </g>
+</svg>
